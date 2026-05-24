@@ -1,0 +1,60 @@
+# ========================
+# SECRETS & ENV VARIABLES
+# ========================
+.env
+.env.*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ========================
+# DEPENDENCIES
+# ========================
+node_modules/
+.pnp
+.pnp.js
+
+# ========================
+# NEXT.JS & WEB
+# ========================
+.next/
+out/
+build/
+dist/
+
+# ========================
+# EXPO & REACT NATIVE
+# ========================
+.expo/
+*.jks
+*.p8
+*.mobileprovision
+*.orig.*
+# React Native / Yarn
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+# CocoaPods
+/apps/mobile/ios/Pods/
+/apps/mobile/ios/build/
+/apps/mobile/android/app/build/
+/apps/mobile/android/.gradle/
+
+# ========================
+# OS GENERATED FILES
+# ========================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ========================
+# MISC / TOOLING
+# ========================
+.vercel/
+coverage/
+*.log
