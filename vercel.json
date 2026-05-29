@@ -1,6 +1,0 @@
-{
-  "buildCommand": "npm run build --workspace=web",
-  "name": "student-app-epoch",
-  "outputDirectory": "apps/web/.next",
-  "framework": "nextjs"
-}
