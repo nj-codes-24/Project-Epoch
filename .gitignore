@@ -58,3 +58,4 @@ Thumbs.db
 .vercel/
 coverage/
 *.log
+.vercel

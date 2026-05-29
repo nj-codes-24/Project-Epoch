@@ -1,4 +1,5 @@
 import React from 'react';
+import { redirect } from 'next/navigation';
 import { getKnowledgeFeed } from '@api';
 import { createClient } from '@/utils/supabase/server';
 import type { Paper } from '@types-app';
@@ -6,14 +7,12 @@ import type { Paper } from '@types-app';
 export default async function KnowledgeFeed() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  
-  // For MVP, falling back to mock user if not logged in to demonstrate integration
-  const userId = user?.id || '11111111-1111-1111-1111-111111111111';
+  const userId = user!.id;
   const category = 'Artificial Intelligence';
   
   let papers: Paper[] = [];
   try {
-    papers = await getKnowledgeFeed(supabase, userId, category);
+    papers = (await getKnowledgeFeed(supabase, userId, category)) as unknown as Paper[];
   } catch (error) {
     console.error('Failed to fetch knowledge feed:', error);
   }

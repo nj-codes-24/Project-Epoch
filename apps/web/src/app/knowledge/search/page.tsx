@@ -5,13 +5,22 @@ import Link from 'next/link';
 import { getAnonSupabase, searchPapers, searchToolsFromGitHub } from '@api';
 import type { Paper, Tool } from '@types-app';
 
+interface GitHubTool {
+  name: string;
+  description: string;
+  stars: number;
+  forks: number;
+  last_commit_at: string;
+  html_url: string;
+}
+
 export default function SearchPage() {
   const [query, setQuery] = useState('');
   const [activeTab, setActiveTab] = useState<'papers' | 'tools'>('papers');
   const [isSearching, setIsSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const [papers, setPapers] = useState<Paper[]>([]);
-  const [tools, setTools] = useState<Tool[]>([]);
+  const [tools, setTools] = useState<GitHubTool[]>([]);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,8 +34,8 @@ export default function SearchPage() {
       
       // Perform both searches in parallel
       const [papersResult, toolsResult] = await Promise.all([
-        searchPapers(supabase, query),
-        searchToolsFromGitHub(query).catch(() => []) // Fallback to empty if GitHub fails
+        searchPapers(supabase, query) as Promise<Paper[]>,
+        searchToolsFromGitHub(query).catch(() => []) as Promise<GitHubTool[]>
       ]);
       
       setPapers(papersResult);

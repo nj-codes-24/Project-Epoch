@@ -34,7 +34,13 @@ export const getKnowledgeFeed = async (supabase: SupabaseClient<Database>, userI
     .order('processed_at', { ascending: false })
     .limit(30);
 
-  if (error) throw error;
+  if (error) {
+    console.error("GET KNOWLEDGE FEED ERROR:", error);
+    throw error;
+  }
+  
+  console.log("ALL PAPERS LENGTH:", allPapers?.length);
+
   if (!allPapers) return [];
 
   const unseen = allPapers.filter(p => !seenIds.has(p.id));
@@ -45,6 +51,7 @@ export const getKnowledgeFeed = async (supabase: SupabaseClient<Database>, userI
   
   const seen = allPapers.filter(p => seenIds.has(p.id));
   const result = [...unseen, ...seen];
+  console.log("RETURNING RESULT LENGTH:", result.length);
   return result.slice(0, 5);
 };
 

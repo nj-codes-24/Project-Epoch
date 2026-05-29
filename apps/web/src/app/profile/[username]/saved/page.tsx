@@ -17,15 +17,21 @@ export default function ProfileSavedPage({ params }: { params: { username: strin
       try {
         const supabase = createClient();
         const { data: { user } } = await supabase.auth.getUser();
-        const userId = user?.id || '11111111-1111-1111-1111-111111111111';
+        
+        if (!user) {
+          window.location.href = '/auth/login';
+          return;
+        }
+
+        const userId = user.id;
 
         const [papersResult, toolsResult] = await Promise.all([
-          getSavedPapers(supabase, userId),
-          getSavedTools(supabase, userId)
+          getSavedPapers(supabase, userId) as Promise<any>,
+          getSavedTools(supabase, userId) as Promise<any>
         ]);
         
-        setSavedPapers(papersResult);
-        setSavedTools(toolsResult);
+        setSavedPapers(papersResult as Paper[]);
+        setSavedTools(toolsResult as Tool[]);
       } catch (error) {
         console.error("Failed to load saved items:", error);
       } finally {
@@ -109,7 +115,7 @@ export default function ProfileSavedPage({ params }: { params: { username: strin
                   <div className="flex justify-between items-start mb-2">
                     <h3 className="text-headline-sm font-headline text-primary line-clamp-1">{tool.name}</h3>
                     <span className="text-label-sm bg-secondary-container text-on-secondary-container px-2 py-1 rounded-sm flex items-center gap-1">
-                      ★ {tool.github_stars}
+                      ★ {tool.stars}
                     </span>
                   </div>
                   <p className="text-body-md text-on-surface-variant mt-2 line-clamp-3">{tool.description}</p>
