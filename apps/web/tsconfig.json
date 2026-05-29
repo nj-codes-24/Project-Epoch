@@ -20,7 +20,8 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@api": ["../../packages/api/index.ts"]
+      "@api": ["../../packages/api/index.ts"],
+      "@types-app": ["../../packages/types/index.ts"]
     }
   },
   "include": [

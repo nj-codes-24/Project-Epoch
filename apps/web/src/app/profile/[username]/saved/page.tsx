@@ -2,24 +2,26 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { getAnonSupabase, getSavedPapers, getSavedTools } from '@api';
+import { getSavedPapers, getSavedTools } from '@api';
+import { createClient } from '@/utils/supabase/client';
+import type { Paper, Tool } from '@types-app';
 
 export default function ProfileSavedPage({ params }: { params: { username: string } }) {
   const [activeTab, setActiveTab] = useState<'papers' | 'tools'>('papers');
-  const [savedPapers, setSavedPapers] = useState<any[]>([]);
-  const [savedTools, setSavedTools] = useState<any[]>([]);
+  const [savedPapers, setSavedPapers] = useState<Paper[]>([]);
+  const [savedTools, setSavedTools] = useState<Tool[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-
-  // Mock ID until real Auth is integrated
-  const mockUserId = '11111111-1111-1111-1111-111111111111';
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const supabase = getAnonSupabase();
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        const userId = user?.id || '11111111-1111-1111-1111-111111111111';
+
         const [papersResult, toolsResult] = await Promise.all([
-          getSavedPapers(supabase, mockUserId),
-          getSavedTools(supabase, mockUserId)
+          getSavedPapers(supabase, userId),
+          getSavedTools(supabase, userId)
         ]);
         
         setSavedPapers(papersResult);
@@ -38,7 +40,7 @@ export default function ProfileSavedPage({ params }: { params: { username: strin
     <main className="max-w-[1280px] mx-auto p-6 md:p-12">
       <header className="mb-10 flex justify-between items-end border-b border-outline-variant pb-8">
         <div>
-          <h1 className="text-headline-lg text-primary font-headline mb-2">{params.username}'s Profile</h1>
+          <h1 className="text-headline-lg text-primary font-headline mb-2">{params.username}&apos;s Profile</h1>
           <p className="text-body-lg text-on-surface-variant">Proof of Work and Saved Resources</p>
         </div>
         <Link href="/knowledge" className="text-primary-container border border-outline-variant px-4 py-2 rounded hover:bg-surface-dim transition-colors">

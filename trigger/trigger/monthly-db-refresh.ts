@@ -2,14 +2,6 @@ import { logger, schedules } from '@trigger.dev/sdk/v3';
 import { createClient } from '@supabase/supabase-js';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash", generationConfig: { responseMimeType: "application/json" } });
-
 async function getGithubRepoInfo(githubUrl: string) {
   const token = process.env.GITHUB_API_TOKEN;
   const headers: HeadersInit = {
@@ -40,6 +32,8 @@ Return exactly this JSON:
   "topic_tags": ["tag1", "tag2"]
 }`;
   try {
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash", generationConfig: { responseMimeType: "application/json" } });
     const result = await model.generateContent([{ text: prompt }]);
     const parsed = JSON.parse(result.response.text());
     return parsed.topic_tags || [];
@@ -54,6 +48,11 @@ export const monthlyDbRefresh = schedules.task({
   cron: "0 3 1 * *", // 1st of every month at 03:00 UTC
   run: async () => {
     logger.info("Starting Monthly DB Refresh...");
+
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
 
     // 1. Tool version check
     logger.info("Step 1: Refreshing Tools...");

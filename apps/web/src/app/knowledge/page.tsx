@@ -1,17 +1,19 @@
 import React from 'react';
-import { getAnonSupabase, getKnowledgeFeed } from '@api';
+import { getKnowledgeFeed } from '@api';
+import { createClient } from '@/utils/supabase/server';
+import type { Paper } from '@types-app';
 
 export default async function KnowledgeFeed() {
-  const supabase = getAnonSupabase();
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
   
-  // For MVP, hardcoding user ID and category to demonstrate integration
-  // In reality, this comes from auth context
-  const mockUserId = '11111111-1111-1111-1111-111111111111';
+  // For MVP, falling back to mock user if not logged in to demonstrate integration
+  const userId = user?.id || '11111111-1111-1111-1111-111111111111';
   const category = 'Artificial Intelligence';
   
-  let papers: any[] = [];
+  let papers: Paper[] = [];
   try {
-    papers = await getKnowledgeFeed(supabase, mockUserId, category);
+    papers = await getKnowledgeFeed(supabase, userId, category);
   } catch (error) {
     console.error('Failed to fetch knowledge feed:', error);
   }
@@ -37,7 +39,7 @@ export default async function KnowledgeFeed() {
           </div>
         ) : (
           <div className="flex overflow-x-auto gap-6 pb-6 snap-x snap-mandatory">
-            {papers.map((paper: any) => (
+            {papers.map((paper: Paper) => (
               <div 
                 key={paper.id} 
                 className="min-w-[300px] max-w-[320px] shrink-0 border border-outline-variant bg-surface rounded-lg p-6 flex flex-col snap-start shadow-sm hover:shadow-md transition-shadow relative"

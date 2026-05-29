@@ -1,18 +1,19 @@
 {
   "compilerOptions": {
     "target": "es2022",
-    "module": "commonjs",
+    "module": "NodeNext",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "node",
+    "moduleResolution": "NodeNext",
     "resolveJsonModule": true
   },
   "include": [
     "packages/**/*",
     "trigger/**/*",
-    "supabase/**/*"
+    "supabase/**/*",
+    "trigger.config.ts"
   ],
   "exclude": [
     "node_modules",

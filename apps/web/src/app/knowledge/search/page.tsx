@@ -3,14 +3,15 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { getAnonSupabase, searchPapers, searchToolsFromGitHub } from '@api';
+import type { Paper, Tool } from '@types-app';
 
 export default function SearchPage() {
   const [query, setQuery] = useState('');
   const [activeTab, setActiveTab] = useState<'papers' | 'tools'>('papers');
   const [isSearching, setIsSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
-  const [papers, setPapers] = useState<any[]>([]);
-  const [tools, setTools] = useState<any[]>([]);
+  const [papers, setPapers] = useState<Paper[]>([]);
+  const [tools, setTools] = useState<Tool[]>([]);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -102,7 +103,7 @@ export default function SearchPage() {
             <div className="py-12 text-center max-w-2xl bg-surface border border-outline-variant rounded-lg p-8">
               <h3 className="text-headline-sm text-primary mb-2">No research papers found.</h3>
               <p className="text-on-surface-variant text-body-md">
-                We don't have research papers on "{query}" yet. Our database updates daily via ArXiv and Semantic Scholar. Check back soon.
+                We don&apos;t have research papers on &quot;{query}&quot; yet. Our database updates daily via ArXiv and Semantic Scholar. Check back soon.
               </p>
             </div>
           ) : (
@@ -124,7 +125,7 @@ export default function SearchPage() {
             <div className="py-12 text-center max-w-2xl bg-surface border border-outline-variant rounded-lg p-8">
               <h3 className="text-headline-sm text-primary mb-2">No tools found.</h3>
               <p className="text-on-surface-variant text-body-md">
-                We couldn't find any GitHub repositories matching "{query}".
+                We couldn&apos;t find any GitHub repositories matching &quot;{query}&quot;.
               </p>
             </div>
           ) : (

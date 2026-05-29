@@ -13,5 +13,8 @@
     "@google/generative-ai": "^0.24.1",
     "@supabase/supabase-js": "^2.106.2",
     "@trigger.dev/sdk": "^4.4.6"
+  },
+  "devDependencies": {
+    "@trigger.dev/build": "^4.4.6"
   }
 }

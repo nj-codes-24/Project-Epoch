@@ -11,15 +11,15 @@ export default function ProfileSavedScreen() {
   const [isLoading, setIsLoading] = useState(true);
 
   // Mock ID until real Auth is integrated
-  const mockUserId = '11111111-1111-1111-1111-111111111111';
-
   useEffect(() => {
     const fetchData = async () => {
       try {
         const supabase = getAnonSupabase();
+        const { data: { user } } = await supabase.auth.getUser();
+        const userId = user?.id || '11111111-1111-1111-1111-111111111111';
         const [papersResult, toolsResult] = await Promise.all([
-          getSavedPapers(supabase, mockUserId),
-          getSavedTools(supabase, mockUserId)
+          getSavedPapers(supabase, userId),
+          getSavedTools(supabase, userId)
         ]);
         
         setSavedPapers(papersResult);

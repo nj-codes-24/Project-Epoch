@@ -2,15 +2,6 @@ import { logger, schedules, wait } from '@trigger.dev/sdk/v3';
 import { createClient } from '@supabase/supabase-js';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-// Initialize Supabase Admin Client
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash", generationConfig: { responseMimeType: "application/json" } });
-
 const CATEGORIES = [
   'Artificial Intelligence', 'Machine Learning', 'Data Science', 'Web Development', 
   'Mobile Development', 'Cybersecurity', 'Blockchain & Web3', 'Computer Vision', 
@@ -85,6 +76,8 @@ Return this exact JSON:
       // 10 req/min free tier guard - roughly 6 sec between calls
       await new Promise(resolve => setTimeout(resolve, 6000));
       
+      const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash", generationConfig: { responseMimeType: "application/json" } });
       const result = await model.generateContent([{ text: prompt }]);
       const jsonText = result.response.text();
       return JSON.parse(jsonText);
@@ -111,6 +104,13 @@ export const dailyPaperPipeline = schedules.task({
   cron: "0 2 * * *", // Every day at 02:00 UTC
   run: async (payload, { ctx }) => {
     logger.info("Starting Daily Paper Pipeline...");
+
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash", generationConfig: { responseMimeType: "application/json" } });
 
     for (const category of CATEGORIES) {
       try {
@@ -140,7 +140,7 @@ export const dailyPaperPipeline = schedules.task({
 
         // Process ArXiv
         for (const item of arxivData || []) {
-          if (item.arxivId && !dbArxivIds.has(item.arxivId) && !seenTitles.has(item.title)) {
+          if (item.arxivId && item.title && !dbArxivIds.has(item.arxivId) && !seenTitles.has(item.title)) {
             papersToProcess.push({ arxiv_id: item.arxivId, title: item.title, abstract: item.abstract, category, citationCount: 0 });
             seenTitles.add(item.title);
           }
